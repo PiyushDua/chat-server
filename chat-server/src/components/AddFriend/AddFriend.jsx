@@ -10,11 +10,8 @@ import EmailIcon from '@material-ui/icons/Email';
 import { Mutation } from 'react-apollo';
 import gql from "graphql-tag";
 import CssBaseline from '@material-ui/core/CssBaseline';
-import {
-    TextField,
-    InputAdornment,
-    Button,
-} from '@material-ui/core';
+import { SnackBarConsumer } from '../../contexts/SnackBarProvider/SnackBarProvider';
+import { TextField, InputAdornment, Button } from '@material-ui/core';
 
 const Schema = yup.object({
     name: yup.string().required().label('Name'),
@@ -40,10 +37,6 @@ const styles = theme => ({
         alignItems: 'center',
         padding: `${theme.spacing.unit * 2}px ${theme.spacing.unit * 3}px ${theme.spacing.unit * 3}px`,
     },
-    avatar: {
-        margin: theme.spacing.unit,
-        backgroundColor: theme.palette.secondary.main,
-    },
     form: {
         width: '100%',
         marginTop: (theme.spacing.unit) * 4,
@@ -51,9 +44,6 @@ const styles = theme => ({
     submit: {
         marginTop: theme.spacing.unit * 6,
     },
-    spinner: {
-        position: 'absolute',
-    }
 });
 
 const ADD_USER = gql`
@@ -65,7 +55,6 @@ const ADD_USER = gql`
     }
   }
 `;
-
 class AddFriend extends Component {
     state = {
         errors: {},
@@ -74,19 +63,19 @@ class AddFriend extends Component {
         name: '',
     };
 
-    handleChange = field => (event) => {
+    handleChange = (field) => (event) => {
         this.setState({
             [field]: event.target.value,
         }, this.handleValidate);
-    }
+    };
 
-    handleBlur = index => () => {
+    handleBlur = (index) => () => {
         const { touched } = this.state;
         touched[index] = true;
         this.setState({
             touched,
         }, () => this.handleValidate());
-    }
+    };
 
     handleValidate = () => {
         const {
@@ -103,7 +92,7 @@ class AddFriend extends Component {
             .catch((errors) => {
                 this.handleErrors(errors);
             });
-    }
+    };
 
     handleErrors = (errors) => {
         const catchErrors = {};
@@ -115,7 +104,7 @@ class AddFriend extends Component {
         this.setState({
             errors: catchErrors,
         });
-    }
+    };
 
     getError = (field) => {
         const { errors, touched } = this.state;
@@ -124,30 +113,37 @@ class AddFriend extends Component {
         }
         const err = '';
         return errors[field] || err;
-    }
+    };
 
     hasErrors = () => {
         const { errors } = this.state;
         return Object.keys(errors).length !== 0;
-    }
+    };
 
     isTouched = () => {
         const { touched } = this.state;
         return Object.keys(touched).length !== 0;
-    }
+    };
 
-    handleSubmit = (addUser) => {
-        const { onSubmit } = this.props;
+    handleSubmit = (addUser, openSnackbar) => {
+        const { onSubmit, onClose } = this.props;
         const { name, email } = this.state;
-        addUser({ variables: { name, email } });
-        const data = { name, email };
-        onSubmit(data);
+        addUser({ variables: { name, email } }).then((result => {
+            if (result.data.addUser) {
+                const data = { name, email };
+                onSubmit(data);
+                openSnackbar('User Successfully Created', 'success');
+            } else {
+                onClose();
+                openSnackbar('Username already Exists', 'error');
+            }
+        }));
         this.setState({
             name: '',
             email: '',
             disabled: true,
-        })
-    }
+        });
+    };
 
     render() {
         const {
@@ -162,74 +158,75 @@ class AddFriend extends Component {
         } = this.state;
 
         return (
-            <Mutation mutation={ADD_USER}>
-                {(addUser) => (
-                    <Dialog open={open} onClose={onClose}>
-                        <main className={classes.main}>
-                            <CssBaseline />
-                            <Paper className={classes.paper}>
-                                <Typography component="h1" variant="h6" padding="40px">
-                                    ADD User
-                                </Typography>
-                                <TextField
-                                    fullWidth
-                                    className={classes.form}
-                                    variant="outlined"
-                                    label="Name"
-                                    type="text"
-                                    value={name}
-                                    onChange={this.handleChange('name')}
-                                    onBlur={this.handleBlur('name')}
-                                    error={this.getError('name')}
-                                    helperText={this.getError('name')}
-                                    InputProps={{
-                                        startAdornment: (
-                                            <InputAdornment position="start">
-                                                <PersonIcon />
-                                            </InputAdornment>
-                                        ),
-                                    }}
-                                />
-                                <TextField
-                                    className={classes.form}
-                                    variant="outlined"
-                                    label="Email"
-                                    type="email"
-                                    value={email}
-                                    fullWidth
-                                    onChange={this.handleChange('email')}
-                                    onBlur={this.handleBlur('email')}
-                                    error={this.getError('email')}
-                                    helperText={this.getError('email')}
-                                    InputProps={{
-                                        startAdornment: (
-                                            <InputAdornment position="start">
-                                                <EmailIcon />
-                                            </InputAdornment>
-                                        ),
-                                    }}
-                                />
-                                <Button
-                                    className={classes.submit}
-                                    fullWidth
-                                    color="primary"
-                                    onClick={() => this.handleSubmit(addUser)}
-                                    variant="contained"
-                                    disabled={this.hasErrors() || !this.isTouched()}
-                                >
-                                    START
-                                            </Button>
-                            </Paper>
-                        </main>
-                    </Dialog>
+            <SnackBarConsumer>
+                {({ openSnackbar }) => (
+                    <Mutation mutation={ADD_USER}>
+                        {(addUser) => (
+                            <Dialog open={open} onClose={onClose}>
+                                <main className={classes.main}>
+                                    <CssBaseline />
+                                    <Paper className={classes.paper}>
+                                        <Typography component="h1" variant="h6" padding="40px">
+                                            ADD User
+                                        </Typography>
+                                        <TextField
+                                            fullWidth
+                                            className={classes.form}
+                                            variant="outlined"
+                                            label="Name"
+                                            type="text"
+                                            value={name}
+                                            onChange={this.handleChange('name')}
+                                            onBlur={this.handleBlur('name')}
+                                            error={this.getError('name')}
+                                            helperText={this.getError('name')}
+                                            InputProps={{
+                                                startAdornment: (
+                                                    <InputAdornment position="start">
+                                                        <PersonIcon />
+                                                    </InputAdornment>
+                                                ),
+                                            }}
+                                        />
+                                        <TextField
+                                            className={classes.form}
+                                            variant="outlined"
+                                            label="Email"
+                                            type="email"
+                                            value={email}
+                                            fullWidth
+                                            onChange={this.handleChange('email')}
+                                            onBlur={this.handleBlur('email')}
+                                            error={this.getError('email')}
+                                            helperText={this.getError('email')}
+                                            InputProps={{
+                                                startAdornment: (
+                                                    <InputAdornment position="start">
+                                                        <EmailIcon />
+                                                    </InputAdornment>
+                                                ),
+                                            }}
+                                        />
+                                        <Button
+                                            className={classes.submit}
+                                            fullWidth
+                                            color="primary"
+                                            onClick={() => this.handleSubmit(addUser, openSnackbar)}
+                                            variant="contained"
+                                            disabled={this.hasErrors() || !this.isTouched()}
+                                        >
+                                            START
+                                        </Button>
+                                    </Paper>
+                                </main>
+                            </Dialog>
+                        )}
+                    </Mutation>
                 )}
-            </Mutation>
-            //             )
-            //         }}
-            //     </Query>
-        )
-    }
-}
+            </SnackBarConsumer>
+        );
+    };
+};
 
 AddFriend.propTypes = {
     classes: PropTypes.objectOf(PropTypes.string).isRequired,

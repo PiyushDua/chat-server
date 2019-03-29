@@ -10,7 +10,7 @@ const resolvers = {
     },
 
     getAllUser: (root, { name }, context) => {
-      return User.filter(user => (user.name) != name);
+      return User.filter(user => (user.name) !== name);
     },
   },
 
@@ -23,14 +23,17 @@ const resolvers = {
     },
 
     addUser: (parent, { name, email }, { pubsub }) => {
-      const temp = {
-        id: User.length + 1,
-        name,
-        email,
+      const res = User.filter(user => (user.name === name))
+      if(res.length === 0){
+        const temp = {
+          id: User.length + 1,
+          name,
+          email,
+        };
+        User.push(temp);
+        pubsub.publish(USER_ADDED, { userAdded: temp });
+        return temp;
       };
-      User.push(temp);
-      pubsub.publish(USER_ADDED, { userAdded: temp });
-      return temp;
     },
   },
 

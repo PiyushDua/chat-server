@@ -8,16 +8,19 @@ import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
+import { Button } from '@material-ui/core';
 import Typography from '@material-ui/core/Typography';
 import CssBaseline from '@material-ui/core/CssBaseline';
+import { Link as RouterLink } from 'react-router-dom';
+import Link from '@material-ui/core/Link';
 
 const CustomTableCell = withStyles(theme => ({
   head: {
     color: theme.palette.common.inherit,
-    fontSize: 18,
+    fontSize: '18px',
   },
   body: {
-    fontSize: 18,
+    fontSize: '18px',
   },
 }))(TableCell);
 
@@ -27,15 +30,16 @@ const styles = theme => ({
     marginBottom: theme.spacing.unit * 3,
     overflowX: 'auto',
   },
-  table: {
-    textSize: 15,
-    width: '30%',
-    margin: theme.spacing.unit * 4,
-    color: theme.palette.primary,
-    align: 'center',
+  grow: {
+    flexGrow: 1,
+    fontSize: '18px',
   },
-  top: {
-    fontWeight: 'bold',
+  button: {
+    marginLeft: theme.spacing.unit * 70,
+    color: 'inherit',
+  },
+  friend: {
+    marginLeft: theme.spacing.unit * 5,
   },
   strip: {
     cursor: 'pointer',
@@ -43,18 +47,13 @@ const styles = theme => ({
       backgroundColor: theme.palette.background.default,
     },
   },
-
-  head: {
-    marginLeft: theme.spacing.unit * 65,
-  },
-
-  footer: {
-    fontSize: 10,
-  },
-  button: {
-    color: theme.palette.background.primary,
-    marginRight: theme.spacing.unit * 4,
-  },
+  table: {
+    textSize: '18px',
+    width: '25%',
+    margin: theme.spacing.unit * 4,
+    color: theme.palette.primary,
+    align: 'center',
+  }, 
 });
 
 class TableData extends Component {
@@ -62,12 +61,12 @@ class TableData extends Component {
     super(props);
     this.state = {
     };
-  }
+  };
 
   handleOpenChatBox = (details) => {
     const { onSelect } = this.props;
     onSelect(details);
-  }
+  };
 
   render() {
     const {
@@ -81,40 +80,43 @@ class TableData extends Component {
           <CssBaseline />
           <AppBar position="static">
             <Toolbar>
-            <Typography variant="h6" color="inherit">
+              <Typography variant="h6" color="inherit" className={classes.grow}>
                 {`Welcome ${name}`}
               </Typography>
-              <Typography variant="h6" color="inherit" className={classes.head}>
+              <Typography variant="h6" color="inherit">
                 Available Friends
+              </Typography>
+              <Typography variant="h6" color="inherit">
+                <Link to="/" component={RouterLink} color="inherit" underline="none">
+                  <Button className={classes.button}>LOGOUT</Button>
+                </Link>
               </Typography>
             </Toolbar>
           </AppBar>
         </div>
-        <div align="center">
-        <Table className={classes.table}>
-          <TableBody>
-            {data.map((friends) => (
-              <TableRow
-                className={classes.strip}
-                hover
-                onClick={() => this.handleOpenChatBox(friends)}
-              >
-                <CustomTableCell align="center">{friends.name}</CustomTableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
+        <div align="center" className={classes.friend}>
+          <Table className={classes.table}>
+            <TableBody>
+              {data.map((friends) => (
+                <TableRow
+                  className={classes.strip}
+                  hover
+                  onClick={() => this.handleOpenChatBox(friends)}
+                >
+                  <CustomTableCell align="center">{friends.name}</CustomTableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
         </div>
       </Paper>
     );
-  }
-}
+  };
+};
 
 TableData.propTypes = {
   classes: PropTypes.objectOf(PropTypes.string).isRequired,
-  column: PropTypes.objectOf(PropTypes.string).isRequired,
-  data: PropTypes.objectOf(PropTypes.string).isRequired,
+  data: PropTypes.arrayOf(PropTypes.object).isRequired,
 };
-
 
 export default withStyles(styles)(TableData);

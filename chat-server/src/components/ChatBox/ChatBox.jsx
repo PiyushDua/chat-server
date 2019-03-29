@@ -11,6 +11,9 @@ import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 
 const styles = theme => ({
+    icon: {
+        marginLeft: theme.spacing.unit * 40,
+    },
     main: {
         width: 'auto',
         margin: theme.spacing.unit * 4,
@@ -19,21 +22,14 @@ const styles = theme => ({
         width: '60%',
         margin: theme.spacing.unit * 2,
     },
-    root: {
-        width: '100%',
-        maxWidth: 360,
-        backgroundColor: theme.palette.background.paper,
-    },
     button: {
         marginTop: theme.spacing.unit * 7,
-        marginLeft: theme.spacing.unit * 3,
+        marginLeft: theme.spacing.unit * 2,
     },
     field: {
         marginTop: theme.spacing.unit * 6,
-    },
-    icon: {
-        marginLeft: theme.spacing.unit * 40,
-    }
+        width: '70%',
+    }, 
 });
 
 const ADD_MESSAGE = gql`
@@ -162,6 +158,7 @@ class ChatBox extends Component {
                                                     />
                                                 </div>
                                             ) : (
+                                                <div style={{ textAlign: "left" }}>
                                                     <TextField
                                                         className={classes.form}
                                                         variant="outlined"
@@ -169,14 +166,14 @@ class ChatBox extends Component {
                                                         type="text"
                                                         value={record.message}
                                                     />
+                                                </div>
                                                 )
                                         )}
                                         <Mutation mutation={ADD_MESSAGE}>
                                             {sendMessage => (
-                                                <div className={classes.foot}>
+                                                <div>
                                                     <TextField
                                                         className={classes.field}
-                                                        fullwidth
                                                         variant="outlined"
                                                         placeholder="Enter your message here...."
                                                         type="text"

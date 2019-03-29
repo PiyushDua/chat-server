@@ -6,5 +6,5 @@ const pubsub = new PubSub()
 const server = new ApolloServer({ typeDefs, resolvers, context: { pubsub } })
 
 server.listen(4000).then(() => {
-    console.log(`🚀 Server ready at 4000`);
+    console.log(`Server is ready at port 4000`);
 });

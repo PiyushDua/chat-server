@@ -22,7 +22,6 @@ const USER_SUBSCRIPTION = gql`
     }
   }
 `;
-
 class UserDetails extends Component {
     constructor(props) {
         super(props);
@@ -30,7 +29,7 @@ class UserDetails extends Component {
             openChatBox: false,
             friendDetail: '',
         }
-    }
+    };
     onSelect = (details) => {
         this.setState({
             openChatBox: true,
@@ -42,7 +41,7 @@ class UserDetails extends Component {
         this.setState({
             openChatBox: false,
         })
-    }
+    };
 
     subscribeUser = (subscribeToMore) => {
         subscribeToMore({
@@ -96,7 +95,7 @@ class UserDetails extends Component {
                 </Query>
             </>
         )
-    }
+    };
 };
 
 export default UserDetails;

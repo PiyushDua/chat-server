@@ -10,13 +10,11 @@ const styles = theme => ({
     fontSize: 20,
   },
 });
-
 class Buttons extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       open: false,
-      friendsList: [],
     }
   };
 
@@ -35,6 +33,12 @@ class Buttons extends React.Component {
     return (history.push(`/UserList/${name}`));
   };
 
+  handleClose = () => {
+    this.setState({
+      open: false,
+    })
+  };
+
   render() {
     const { classes } = this.props;
     const { open } = this.state;
@@ -50,12 +54,13 @@ class Buttons extends React.Component {
         </Button>
         <AddFriend
           open={open}
+          onClose={this.handleClose}
           onSubmit={this.handleSubmit}
         />
       </div>
     );
   };
-}
+};
 
 Buttons.propTypes = {
   classes: PropTypes.object.isRequired,
