@@ -47,19 +47,13 @@ class UserDetails extends Component {
         subscribeToMore({
             document: USER_SUBSCRIPTION,
             updateQuery: (prev, { subscriptionData }) => {
-                if (!subscriptionData.data) {
-                    return prev;
-                }
+                if (!subscriptionData.data) return prev;
                 const newData = subscriptionData.data.userAdded;
-                if (!prev.getAllUser.find(user => user.id === newData.id)) {
-                    const data = Object.assign({}, prev, {
-                        getAllUser: [...prev.getAllUser, newData]
-                    });
-                    return data;
-                } else {
-                    return prev;
-                };
-            }
+                const data = Object.assign({}, prev, {
+                    getAllUser: [...prev.getAllUser, newData]
+                });
+                return data;
+            },
         });
     };
 
@@ -73,12 +67,12 @@ class UserDetails extends Component {
                     {({ subscribeToMore, loading, error, data }) => {
                         if (loading) return "Loading...";
                         if (error) return `Error! ${error.message}`;
-                        this.subscribeUser(subscribeToMore);
                         const records = data.getAllUser;
                         return (
                             <>
                                 <Table
                                     data={records}
+                                    subscribe={() => this.subscribeUser(subscribeToMore)}
                                     onSelect={this.onSelect}
                                     name={name} 
                                 />

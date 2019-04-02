@@ -63,6 +63,11 @@ class TableData extends Component {
     };
   };
 
+  componentDidMount() {
+    const { subscribe } = this.props;
+    subscribe();
+  };
+
   handleOpenChatBox = (details) => {
     const { onSelect } = this.props;
     onSelect(details);

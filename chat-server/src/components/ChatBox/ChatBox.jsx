@@ -12,15 +12,17 @@ import Typography from '@material-ui/core/Typography';
 
 const styles = theme => ({
     icon: {
-        marginLeft: theme.spacing.unit * 40,
+        marginLeft: theme.spacing.unit * 170,
+        flexGrow: 1,
     },
     main: {
         width: 'auto',
         margin: theme.spacing.unit * 4,
     },
     form: {
-        width: '60%',
-        margin: theme.spacing.unit * 2,
+        width: '30%',
+        marginLeft: theme.spacing.unit,
+        marginTop: theme.spacing.unit * 4,
     },
     button: {
         marginTop: theme.spacing.unit * 7,
@@ -28,8 +30,11 @@ const styles = theme => ({
     },
     field: {
         marginTop: theme.spacing.unit * 6,
-        width: '70%',
-    }, 
+        width: '93%',
+    },
+    foot: {
+        bottom: 0,
+    },
 });
 
 const ADD_MESSAGE = gql`
@@ -79,8 +84,11 @@ class ChatBox extends Component {
     handleChange = (field) => (event) => {
         this.setState({
             disabled: false,
-            [field]: event.target.value
+            [field]: event.target.value,
         });
+        (event.target.value === '') 
+        ? this.setState({ disabled: true })
+        : this.setState({ disabled: false })
     };
 
     subscribeMessage = (subscribeToMore) => {
@@ -126,7 +134,7 @@ class ChatBox extends Component {
                         if (error) return `Error! ${error.message}`;
                         this.subscribeMessage(subscribeToMore);
                         return (
-                            <Dialog open={open} onClose={onClose}>
+                            <Dialog open={open} onClose={onClose} fullScreen>
                                 <CssBaseline />
                                 <AppBar position="static">
                                     <Toolbar>
@@ -158,42 +166,42 @@ class ChatBox extends Component {
                                                     />
                                                 </div>
                                             ) : (
-                                                <div style={{ textAlign: "left" }}>
-                                                    <TextField
-                                                        className={classes.form}
-                                                        variant="outlined"
-                                                        label={record.from}
-                                                        type="text"
-                                                        value={record.message}
-                                                    />
-                                                </div>
+                                                    <div style={{ textAlign: "left" }}>
+                                                        <TextField
+                                                            className={classes.form}
+                                                            variant="outlined"
+                                                            label={record.from}
+                                                            type="text"
+                                                            value={record.message}
+                                                        />
+                                                    </div>
                                                 )
                                         )}
-                                        <Mutation mutation={ADD_MESSAGE}>
-                                            {sendMessage => (
-                                                <div>
-                                                    <TextField
-                                                        className={classes.field}
-                                                        variant="outlined"
-                                                        placeholder="Enter your message here...."
-                                                        type="text"
-                                                        value={message}
-                                                        onChange={this.handleChange('message')}
-                                                    />
-                                                    <Button
-                                                        color="primary"
-                                                        variant="contained"
-                                                        className={classes.button}
-                                                        disabled={disabled}
-                                                        onClick={() => this.handleSend(sendMessage)}
-                                                    >
-                                                        Send
-                                                </Button>
-                                                </div>
-                                            )}
-                                        </Mutation>
                                     </main>
                                 </DialogContent>
+                                <Mutation mutation={ADD_MESSAGE}>
+                                    {sendMessage => (
+                                        <div className={classes.foot}>
+                                            <TextField
+                                                className={classes.field}
+                                                variant="outlined"
+                                                placeholder="Enter your message here...."
+                                                type="text"
+                                                value={message}
+                                                onChange={this.handleChange('message')}
+                                            />
+                                            <Button
+                                                color="primary"
+                                                variant="contained"
+                                                className={classes.button}
+                                                disabled={disabled}
+                                                onClick={() => this.handleSend(sendMessage)}
+                                            >
+                                                Send
+                                                </Button>
+                                        </div>
+                                    )}
+                                </Mutation>
                             </Dialog>
                         );
                     }}
