@@ -130,6 +130,7 @@ class AddFriend extends Component {
         const { name, email } = this.state;
         addUser({ variables: { name, email } }).then((result => {
             if (result.data.addUser) {
+                const { name, email } = result.data.addUser;
                 const data = { name, email };
                 onSubmit(data);
                 openSnackbar('User Successfully Created', 'success');

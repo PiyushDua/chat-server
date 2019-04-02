@@ -10,10 +10,10 @@ import CloseIcon from '@material-ui/icons/Close';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 
-const styles = theme => ({
+const styles = (theme) => ({
     icon: {
-        marginLeft: theme.spacing.unit * 170,
         flexGrow: 1,
+        marginLeft: theme.spacing.unit * 160,
     },
     main: {
         width: 'auto',
@@ -30,7 +30,7 @@ const styles = theme => ({
     },
     field: {
         marginTop: theme.spacing.unit * 6,
-        width: '93%',
+        width: '90%',
     },
     foot: {
         bottom: 0,
@@ -193,6 +193,7 @@ class ChatBox extends Component {
                                             <Button
                                                 color="primary"
                                                 variant="contained"
+                                                size="large"
                                                 className={classes.button}
                                                 disabled={disabled}
                                                 onClick={() => this.handleSend(sendMessage)}
